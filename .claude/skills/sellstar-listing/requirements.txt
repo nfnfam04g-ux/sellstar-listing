@@ -1,0 +1,6 @@
+# セルスタ出品ツール — シート読み書き(sheet_io.py)に必要なPythonパッケージ
+# サブPCセットアップ:
+#   python3 -m venv venv
+#   ./venv/bin/python -m pip install -r requirements.txt
+gspread>=6.0.0
+google-auth>=2.20.0

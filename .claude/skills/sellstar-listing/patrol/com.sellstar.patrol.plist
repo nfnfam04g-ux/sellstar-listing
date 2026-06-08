@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  セルスタ出品ツール 自動巡回（launchd / macOS）テンプレート
+  ─────────────────────────────────────────────────────────
+  3時間ごとに sellstar.sh patrol を実行する。caffeinate はスクリプト内で効かせる。
+
+  導入手順（メインPCのユーザー名が nfnfa でない／パスが違う場合は ProgramArguments を直す）:
+    1) このファイルを ~/Library/LaunchAgents/ にコピー
+         cp patrol/com.sellstar.patrol.plist ~/Library/LaunchAgents/
+    2) 読み込み
+         launchctl load  ~/Library/LaunchAgents/com.sellstar.patrol.plist
+    3) 止めるとき
+         launchctl unload ~/Library/LaunchAgents/com.sellstar.patrol.plist
+    4) 今すぐ1回テスト実行
+         launchctl start com.sellstar.patrol
+
+  注意:
+    - 無人巡回は Chrome がログイン済み＆Claude in Chrome 拡張が接続済みであることが前提。
+      画面ロック中や Chrome 未起動だと転記できない。安定運用は「対話モード(run)」推奨。
+    - StartInterval=10800秒=3時間。時刻を固定したい場合は StartCalendarInterval に変更。
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.sellstar.patrol</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/nfnfa/company/eBay/ebay-listing/sellstar-listing/.claude/skills/sellstar-listing/sellstar.sh</string>
+        <string>patrol</string>
+    </array>
+
+    <!-- 3時間ごと（秒）。ログイン中のみ動く LaunchAgent。 -->
+    <key>StartInterval</key>
+    <integer>10800</integer>
+
+    <!-- PATH に claude(~/.local/bin) と通常の bin を通す -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/nfnfa/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/nfnfa/Library/Logs/sellstar-patrol.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/nfnfa/Library/Logs/sellstar-patrol.err.log</string>
+</dict>
+</plist>
